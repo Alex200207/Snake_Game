@@ -39,3 +39,7 @@ body {
    cada una usando 1fr, es decir, repartiendo el espacio en partes iguales */
   grid-template: repeat(30, 1fr) / repeat(30, 1fr);
 }
+
+.play-board .food {
+  background: #ff003d;
+}
