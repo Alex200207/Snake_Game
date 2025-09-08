@@ -1,75 +1,85 @@
-//funcion inicializadora del juego
+// funcion inicializadora del juego
 const playBoard = document.querySelector(".play-board");
 
-//cordenas de la comida
+// coordenadas de la comida
 let foodX = 13,
   foodY = 10;
 
-//cordenas de la serpiente
+// coordenadas de la serpiente (posición inicial de la cabeza)
 let snakeX = 5,
   snakeY = 10;
 
-//velocidad de la serpiente
+// cuerpo de la serpiente (arreglo de posiciones [x,y])
+let snakeBody = [];
+
+// velocidad de la serpiente
 let velocityX = 0,
   velocityY = 0;
 
+// función para cambiar la posición de la comida aleatoriamente
 const changeFoodPosition = () => {
-  //buscar al asar un numero entre 1 y 30
+  // genera un número al azar entre 1 y 30
   foodX = Math.floor(Math.random() * 30) + 1;
   foodY = Math.floor(Math.random() * 30) + 1;
-  console.log(foodX);
 };
 
-//funcion para mover la serpiente
-//en la web las cordenadas haciar arriba son negativas y hacia abajo positivas
+// función para mover la serpiente según la tecla presionada
+// en la web, en el eje Y: hacia arriba es negativo y hacia abajo positivo
 const changeDirection = (e) => {
   if (e.key === "ArrowUp") {
-    //se le pone 0 para que no se mueva en x
     velocityX = 0;
-    //se resta 1 para que vaya hacia arriba
-    velocityY = -1;
+    velocityY = -1; // hacia arriba (Y negativo)
   } else if (e.key === "ArrowDown") {
-    //se le pone 0 para que no se mueva en x
     velocityX = 0;
-    //se resta 1 para que vaya hacia arriba
-    velocityY = 1;
+    velocityY = 1; // hacia abajo (Y positivo)
   } else if (e.key === "ArrowLeft") {
-    //se le pone 0 para que no se mueva en y
     velocityY = 0;
-    //se resta 1 para que vaya hacia la izquierda
-    velocityX = -1;
+    velocityX = -1; // hacia la izquierda (X negativo)
   } else if (e.key === "ArrowRight") {
-    //se le pone 0 para que no se mueva en y
     velocityY = 0;
-    //se suma 1 para que vaya hacia la derecha
-    velocityX = 1;
+    velocityX = 1; // hacia la derecha (X positivo)
   }
-
 };
 
+// función principal del juego
 const initGame = () => {
+  // dibujar la comida en la cuadrícula
   let htmlMarkup = `<div class="food" style="grid-area:${foodY} / ${foodX}"></div>`;
 
-  //comer la comida
-  if(snakeX === foodX && snakeY === foodY){
-    changeFoodPosition()
+  // comprobar si la serpiente come la comida
+  if (snakeX === foodX && snakeY === foodY) {
+    changeFoodPosition();
+    // agregar un nuevo segmento al cuerpo de la serpiente
+    snakeBody.push([foodX, foodY]);
   }
 
+  // mover el cuerpo de la serpiente (cada segmento toma la posición del anterior)
+  for (let i = snakeBody.length - 1; i > 0; i--) {
+    snakeBody[i] = snakeBody[i - 1];
+  }
 
-  // Actualiza la posición de la serpiente sumando la velocidad en cada eje
-  snakeY += velocityY; // mueve la serpiente en el eje vertical (arriba/abajo)
-  snakeX += velocityX; // mueve la serpiente en el eje horizontal (izquierda/derecha)
+  // actualizar la posición de la cabeza sumando la velocidad
+  snakeY += velocityY; // mueve la serpiente en el eje vertical
+  snakeX += velocityX; // mueve la serpiente en el eje horizontal
 
-  //crear serpiente
-  htmlMarkup += `<div class="snake" style="grid-area:${snakeY} / ${snakeX}"></div>`;
+  // actualizar la cabeza en el cuerpo
+  snakeBody[0] = [snakeX, snakeY];
 
+  // dibujar la serpiente
+  for (let i = 0; i < snakeBody.length; i++) {
+    // grid-area: fila(Y) / columna(X)
+    htmlMarkup += `<div class="snake" style="grid-area:${snakeBody[i][1]} / ${snakeBody[i][0]}"></div>`;
+  }
+
+  // mostrar en el tablero
   playBoard.innerHTML = htmlMarkup;
 };
 
-//lamado a la funcion
+// llamada inicial para colocar la comida
 changeFoodPosition();
-//ejecutar la funcion initGame cada 125ms
+
+// ejecutar la función initGame cada 125ms (bucle del juego)
 setInterval(initGame, 125);
 
-//nuevo evento
+// escuchar las teclas del teclado para cambiar dirección
 document.addEventListener("keydown", changeDirection);
