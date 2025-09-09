@@ -89,6 +89,24 @@ const initGame = () => {
   // dibujar la serpiente
   for (let i = 0; i < snakeBody.length; i++) {
     htmlMarkup += `<div class="snake" style="grid-area:${snakeBody[i][1]} / ${snakeBody[i][0]}"></div>`;
+    // comprobar colisión con el cuerpo
+    // Verifica si la cabeza de la serpiente colisiona con alguna parte de su cuerpo.
+    // i !== 0: asegura que no se compare la cabeza consigo misma.
+    // Compara la posición completa (X, Y) de la cabeza con la de cada segmento del cuerpo.
+    // Si la condición se cumple, se establece gameOver en true.
+    if (i !== 0 && snakeBody[0][0] === snakeBody[i][0] && snakeBody[0][1] === snakeBody[i][1]) {
+      handleGameOver();
+      // Reiniciar el juego
+      snakeX = 5;
+      snakeY = 10;
+      snakeBody = [];
+      velocityX = 0;
+      velocityY = 0;
+      nextX = 0;
+      nextY = 0;
+      changeFoodPosition();
+      break;
+    }
   }
 
   playBoard.innerHTML = htmlMarkup;
