@@ -1,6 +1,11 @@
 // funcion inicializadora del juego
 const playBoard = document.querySelector(".play-board");
 
+//obetner elementos de puntuación
+const scoreElement = document.querySelector(".score");
+// obtener elemento de puntuación más alta
+const highScoreElement = document.querySelector(".high-score");
+
 // coordenadas de la comida
 let foodX = 13,
   foodY = 10;
@@ -19,6 +24,12 @@ let velocityX = 0,
 // dirección siguiente (para evitar giros de 180° instantáneos)
 let nextX = 0,
   nextY = 0;
+
+//puntuación
+let score = 0;
+
+// puntuación más alta (high score)
+let highScore = localStorage.getItem("high-score") || 0;
 
 // función para cambiar la posición de la comida aleatoriamente
 const changeFoodPosition = () => {
@@ -61,6 +72,22 @@ const initGame = () => {
   if (snakeX === foodX && snakeY === foodY) {
     changeFoodPosition();
     snakeBody.push([foodX, foodY]); // crecer
+    score++; // aumentar puntuación
+
+    //aqui actualizamos la puntuación en el HTML
+    scoreElement.innerText = `Score: ${score}`;
+
+    // actualizar la puntuación más alta (high score)
+    highScore = score >= highScore ? score : highScore;
+
+    //alamcenar la puntuación más alta en el HTML
+    localStorage.setItem("high-score", highScore);
+
+    //guardar en el almacenamiento local
+    localStorage.setItem("high-score", highScore);
+
+    // actualizar el elemento de puntuación más alta en el HTML
+    highScoreElement.innerText = `High Score: ${highScore}`;
   }
 
   // mover el cuerpo de la serpiente
@@ -94,7 +121,11 @@ const initGame = () => {
     // i !== 0: asegura que no se compare la cabeza consigo misma.
     // Compara la posición completa (X, Y) de la cabeza con la de cada segmento del cuerpo.
     // Si la condición se cumple, se establece gameOver en true.
-    if (i !== 0 && snakeBody[0][0] === snakeBody[i][0] && snakeBody[0][1] === snakeBody[i][1]) {
+    if (
+      i !== 0 &&
+      snakeBody[0][0] === snakeBody[i][0] &&
+      snakeBody[0][1] === snakeBody[i][1]
+    ) {
       handleGameOver();
       // Reiniciar el juego
       snakeX = 5;
